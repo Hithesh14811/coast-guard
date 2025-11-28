@@ -1,0 +1,309 @@
+PROJECT TITLE:
+
+CoastGuard Lite — Fishermen Live GPS Tracking + Ocean Drift Prediction + Search Heatmap System
+
+📌 FULL OBJECTIVE:
+
+Build a complete, production-ready web + mobile application that helps track fishermen near the shore using GPS (when network exists) and automatically predicts their drift location when GPS updates stop (lost connection), using ocean wind and current data. The system must include:
+
+✔ A Fisherman App (mobile-first web app)
+✔ A Coast Guard Dashboard (web)
+✔ Live GPS tracking system (uses device geolocation)
+✔ Auto “Signal Lost Detection”
+✔ Full Drift Prediction Engine
+✔ Monte Carlo Simulation (50–200 drift paths)
+✔ Heatmap of probable search area
+✔ API integration with marine weather services
+✔ Database to store all coordinates
+✔ A full backend with endpoints
+✔ Push notifications / alerts
+✔ Clean UI/UX
+✔ Ready-to-deploy build
+
+You MUST build the entire solution from scratch end-to-end with no placeholders.
+
+📌 PROBLEM STATEMENT:
+
+Fishermen in coastal regions often go missing when their boats drift away due to wind, currents, or engine failure. Near the shore, mobile signal is available and fishermen can send their GPS location. But once they drift deeper, network disappears and GPS updates stop. Today, no system exists that:
+
+Tracks fisherman’s GPS live (when connected)
+
+Detects when the signal is lost
+
+Predicts the drift direction using real marine data
+
+Simulates multiple possible drift paths
+
+Generates a heatmap of probable locations
+
+Allows coast guard teams to visually analyze drift area
+
+This application solves this entire problem with real-time tracking + intelligent drift simulation.
+
+📌 END-TO-END REQUIREMENTS:
+1️⃣ Build Two Web Applications
+A. Fisherman Mobile Web App
+
+Mobile-first responsive design
+
+Minimal UI
+
+Shows:
+
+"Start Sharing My Location"
+
+"Stop Sharing"
+
+“Status: Connected / Not Connected”
+
+Uses the browser's navigator.geolocation.watchPosition to send GPS continuously
+
+Sends updates every 5–10 seconds
+
+Shows small map preview of location
+
+B. Coast Guard Dashboard
+
+Large interactive map (Leaflet preferred)
+
+Shows:
+
+Live GPS marker
+
+Last known location
+
+Drift prediction paths
+
+Heatmap of predicted search area
+
+Panel with:
+
+coordinates
+
+timestamps
+
+last update
+
+drift simulation status
+
+Button to:
+
+Manually trigger drift mode
+
+Refresh ocean weather data
+
+Change simulation hours
+
+Start/stop auto-refresh
+
+2️⃣ Backend & Database Setup
+
+Use any suitable stack the AI prefers (Node.js, Firebase, Python FastAPI, etc.). Backend must include:
+
+Database Collections:
+
+fisherman_location
+
+lat
+
+lng
+
+timestamp
+
+status: online/offline
+
+drift_results
+
+simulation_hours
+
+predicted_points: array
+
+heatmap_points: array
+
+generated_at
+
+alerts
+
+type
+
+message
+
+timestamp
+
+Backend Functions:
+
+save fisherman GPS
+
+detect signal loss
+
+fetch marine weather data
+
+run drift simulation
+
+run Monte Carlo simulation
+
+generate heatmap points
+
+provide API to the dashboard
+
+3️⃣ GPS Tracking Module
+
+Implement:
+
+navigator.geolocation.watchPosition(...)
+
+
+Send:
+
+lat
+
+lng
+
+timestamp
+
+Ping every 10 seconds.
+
+If no update for 60 seconds:
+
+Set fisherman status = “offline”
+
+Trigger drift simulation automatically
+
+4️⃣ Marine Weather Data Integration
+
+Integrate with Open-Meteo Marine API:
+
+Fetch:
+
+wind speed
+
+wind direction
+
+wave height
+
+ocean current speed
+
+ocean current direction
+
+This must be real API integration, not a placeholder.
+
+5️⃣ Drift Prediction Engine
+
+Implement a complete drift algorithm:
+
+const R = 6371; // Earth radius
+
+function calculateDrift(lat, lng, windSpd, windDir, curSpd, curDir, hours) {
+    // composite drift speed & direction
+    const combinedSpeed = curSpd + (windSpd * 0.03);
+    const angle = (curDir + (windDir * 0.2)) * Math.PI / 180;
+
+    const distance = combinedSpeed * hours / 60; // km
+
+    const newLat = lat + (distance / R) * (180 / Math.PI) * Math.cos(angle);
+    const newLng = lng + (distance / R) * (180 / Math.PI) * Math.sin(angle);
+
+    return { lat: newLat, lng: newLng };
+}
+
+6️⃣ Monte Carlo Simulation
+
+Simulate 50–200 paths:
+
+Vary wind speed ±20%
+
+Vary current speed ±15%
+
+Randomize direction ± 10–20°
+
+Compute drift for each hour for next 1–6 hours
+
+Collect points
+
+Return both:
+
+All path coordinates
+
+Heatmap array
+
+7️⃣ Heatmap Visualization
+
+Use Leaflet.heat plugin.
+Render:
+
+multi-path overlay
+
+search-area heatmap
+
+Heatmap must update whenever drift is re-run.
+
+8️⃣ Auto Switch Logic
+
+If no GPS for >60 seconds:
+
+Trigger drift mode
+
+Display alert
+
+Update UI
+
+Start simulation
+
+Dashboard must show:
+
+“LIVE MODE” when GPS is active
+
+“DRIFT MODE” when GPS lost
+
+9️⃣ UI/UX Requirements
+Fisherman App:
+
+Bold buttons
+
+Large status text
+
+Battery-efficient operation
+
+Dashboard:
+
+Heatmap toggle
+
+Path toggle
+
+Refresh marine data
+
+Hour slider
+
+Dark mode
+
+🔟 Deploy the Entire App
+
+Deploy backend to Firebase/Render/Vercel
+
+Deploy frontend to Netlify/Vercel
+
+Provide final URLs for:
+
+fisherman app
+
+coast guard dashboard
+
+1️⃣1️⃣ Add Alerts
+
+Visual alerts when GPS lost
+
+Visual alerts when drift simulation done
+
+Colored badges
+
+Optional sound notification
+
+1️⃣2️⃣ Error Handling
+
+GPS permission errors
+
+Marine API errors
+
+Network errors
+
+Missing data fallback
